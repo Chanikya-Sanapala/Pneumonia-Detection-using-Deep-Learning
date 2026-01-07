@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Pneumonia Detection</title>
+
+  <!-- main stylesheet -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/site.css') }}">
+
+  <!-- Three.js for 3D graphics -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  
+  <!-- Lottie (deferred) -->
+  <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js" defer></script>
+
+  <!-- main JS (deferred) -->
+  <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <h1 class="brand"><a href="{{ url_for('index') }}" style="text-decoration: none; color: inherit;">Pneumonia Detection AI</a></h1>
+      <nav class="main-nav">
+        <ul>
+          <li><a href="{{ url_for('about') }}" class="nav-link">About Us</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <small>© {{ (2025) }} Pneumonia Detection — Dataset: Kaggle Chest X-Ray</small>
+      <div class="footer-links">
+        <a href="#">Privacy</a> · <a href="#">Docs</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

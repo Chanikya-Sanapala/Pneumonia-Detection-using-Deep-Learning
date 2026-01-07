@@ -1,0 +1,11 @@
+tensorflow>=2.11
+numpy
+opencv-python
+pillow
+flask
+werkzeug
+matplotlib
+pandas
+scikit-learn
+scipy
+reportlab

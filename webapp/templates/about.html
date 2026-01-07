@@ -1,0 +1,250 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="about-container">
+    <h2>About Pneumonia Detection AI</h2>
+    
+    <!-- 3D Lungs Animation -->
+    <div id="hero-right" class="lungs-3d-container" aria-hidden="true"></div>
+    
+    <!-- subtle glow layer -->
+    <div class="hero-anim-glow" aria-hidden="true"></div>
+    
+    <section class="project-overview">
+        <h3>Project Overview</h3>
+        <p>This web application leverages cutting-edge artificial intelligence to detect pneumonia from chest X-ray images with high accuracy. Using a pre-trained VGG16 convolutional neural network, our system analyzes medical images in real-time to provide instant diagnostic assistance to healthcare professionals.</p>
+    </section>
+
+    <section class="how-it-works">
+        <h3>How It Works</h3>
+        <div class="process-steps">
+            <div class="step">
+                <h4>1. Image Upload</h4>
+                <p>Users upload chest X-ray images through our secure web interface. The system accepts PNG, JPG, and JPEG formats.</p>
+            </div>
+            <div class="step">
+                <h4>2. Preprocessing</h4>
+                <p>The uploaded image is automatically resized to 224x224 pixels and normalized to match the training data format used by our model.</p>
+            </div>
+            <div class="step">
+                <h4>3. AI Analysis</h4>
+                <p>The VGG16 model processes the image through multiple convolutional layers, extracting features and patterns indicative of pneumonia.</p>
+            </div>
+            <div class="step">
+                <h4>4. Prediction</h4>
+                <p>The system outputs a classification (NORMAL or PNEUMONIA) with a confidence score, providing immediate diagnostic insights.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="technical-details">
+        <h3>Technical Architecture</h3>
+        <div class="tech-grid">
+            <div class="tech-item">
+                <h4>Model: VGG16 Transfer Learning</h4>
+                <p>Utilizes the powerful VGG16 architecture pre-trained on ImageNet, fine-tuned specifically for medical imaging.</p>
+            </div>
+            <div class="tech-item">
+                <h4>Backend: Flask Framework</h4>
+                <p>Python-based web application providing robust API endpoints and secure file handling.</p>
+            </div>
+            <div class="tech-item">
+                <h4>Frontend: Modern HTML/CSS/JavaScript</h4>
+                <p>Responsive interface with real-time progress tracking and interactive 3D visualizations.</p>
+            </div>
+            <div class="tech-item">
+                <h4>Dataset: Kaggle Chest X-Ray</h4>
+                <p>Trained on 5,863 images from pediatric patients aged 1-5 years from Guangzhou Women and Children's Medical Center.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="benefits">
+        <h3>Key Benefits</h3>
+        <div class="benefits-list">
+            <div class="benefit">
+                <h4>⚡ Real-time Processing</h4>
+                <p>Get instant results within seconds, enabling rapid clinical decision-making.</p>
+            </div>
+            <div class="benefit">
+                <h4>🎯 High Accuracy</h4>
+                <p>Achieves 95%+ accuracy in pneumonia detection, reducing false negatives and improving patient outcomes.</p>
+            </div>
+            <div class="benefit">
+                <h4>🔒 Secure & Private</h4>
+                <p>All medical images are processed locally with no data storage, ensuring patient privacy compliance.</p>
+            </div>
+            <div class="benefit">
+                <h4>📱 Accessible</h4>
+                <p>Web-based platform accessible from any device with internet connectivity, no installation required.</p>
+            </div>
+            <div class="benefit">
+                <h4>💰 Cost-Effective</h4>
+                <p>Reduces need for multiple radiologist consultations, lowering healthcare costs.</p>
+            </div>
+            <div class="benefit">
+                <h4>📊 PDF Reports</h4>
+                <p>Generate professional medical reports with prediction results and confidence scores for documentation.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="mechanism">
+        <h3>Prediction Mechanism</h3>
+        <div class="mechanism-details">
+            <p>Our VGG16 model uses a sophisticated multi-layer approach:</p>
+            <ul>
+                <li><strong>Convolutional Layers:</strong> Extract hierarchical features from edges to complex patterns</li>
+                <li><strong>Pooling Layers:</strong> Reduce spatial dimensions while preserving important features</li>
+                <li><strong>Fully Connected Layers:</strong> Perform final classification based on extracted features</li>
+                <li><strong>Softmax Activation:</strong> Output probability distribution for NORMAL vs PNEUMONIA</li>
+            </ul>
+            <p>The model analyzes specific radiological features including:</p>
+            <ul>
+                <li> Lung opacity and consolidation patterns</li>
+                <li> Interstitial infiltrates and abnormalities</li>
+                <li> Cardiac silhouette and pulmonary vasculature</li>
+                <li> Costophrenic angle blunting</li>
+            </ul>
+        </div>
+    </section>
+
+    <section class="disclaimer">
+        <h3>Important Disclaimer</h3>
+        <p><strong>This AI system is designed to assist healthcare professionals, not replace them.</strong> While our model achieves high accuracy, all predictions should be confirmed by qualified radiologists. The system is not intended for self-diagnosis and should be used as a supplementary tool in clinical practice.</p>
+    </section>
+</div>
+
+<style>
+body {
+    background: linear-gradient(135deg, #87CEEB 0%, #98D8E8 50%, #B0E0E6 100%);
+    min-height: 100vh;
+}
+
+.about-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    line-height: 1.6;
+}
+
+.about-container h2 {
+    color: white;
+    border-bottom: 3px solid #ff006e;
+    padding-bottom: 0.5rem;
+    margin-bottom: 2rem;
+}
+
+.about-container h3 {
+    color: white;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.process-steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+}
+
+.step {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border-left: 4px solid #ff006e;
+}
+
+.step h4 {
+    color: black;
+    margin-bottom: 0.5rem;
+}
+
+.step p {
+    color: black;
+}
+
+.tech-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+}
+
+.tech-item {
+    background: #fff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.tech-item h4 {
+    color: black;
+    margin-bottom: 0.5rem;
+}
+
+.tech-item p {
+    color: black;
+}
+
+.benefits-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+}
+
+.benefit {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+}
+
+.mechanism-details {
+    background: #f8f9fa;
+    padding: 2rem;
+    border-radius: 8px;
+    margin: 1.5rem 0;
+}
+
+.mechanism-details p {
+    color: black;
+}
+
+.mechanism-details li {
+    color: black;
+    margin: 0.5rem 0;
+}
+
+.disclaimer {
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-top: 2rem;
+}
+
+.disclaimer h3 {
+    color: black;
+}
+
+.disclaimer p {
+    color: black;
+}
+
+@media (max-width: 768px) {
+    .about-container {
+        padding: 1rem;
+    }
+    
+    .process-steps,
+    .tech-grid,
+    .benefits-list {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<!-- load the realistic 3D lungs animation script -->
+<script src="{{ url_for('static', filename='js/realisticLungs.js') }}" defer></script>
+{% endblock %}

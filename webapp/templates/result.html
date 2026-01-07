@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+{% block content %}
+<section class="result-section">
+  <div class="container result-wrap">
+    <div class="result-card">
+      <h3>Prediction Result</h3>
+      <div class="result-left">
+        <img src="{{ url_for('uploaded_file', filename=filename) }}" alt="uploaded" class="result-image" />
+      </div>
+      <div class="result-right">
+        <p><strong>Label:</strong> <span class="label">{{ result.label }}</span></p>
+        <p><strong>Confidence:</strong> <span class="confidence">{{ (result.confidence*100)|round(2) }}%</span></p>
+        <p><strong>Raw score:</strong> {{ result.score|round(4) }}</p>
+        <p><strong>Model:</strong> VGG16 transfer learning</p>
+
+        <div class="result-actions">
+          <a class="btn" href="{{ url_for('index') }}">Predict another</a>
+          <a class="btn outline" href="{{ url_for('uploaded_file', filename=filename) }}" download>Download</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="gradcam">
+      <h4>Attention Map (Grad-CAM)</h4>
+      <p class="small">Enable Grad-CAM overlay to visualize regions contributing to prediction.</p>
+      <img src="{{ url_for('static', filename='images/gradcam_placeholder.png') }}" alt="gradcam" />
+    </div>
+  </div>
+</section>
+{% endblock %}

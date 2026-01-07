@@ -1,0 +1,56 @@
+{% extends "layout.html" %}
+{% block content %}
+<section class="hero">
+  <div class="container hero-inner">
+    <div class="hero-left">
+      <div class="subtitle reveal">Artificial Intelligence</div>
+      <h2 class="reveal">PNEUMONIA<br>DETECTION SYSTEM</h2>
+      <p class="tagline reveal">Advanced deep learning technology for accurate pneumonia detection from chest X-ray images with real-time confidence scores.</p>
+      
+      <ul class="benefits reveal">
+        <li>VGG16 Transfer Learning</li>
+        <li>95%+ Accuracy</li>
+        <li>Real-time Processing</li>
+        <li>Medical Grade Security</li>
+      </ul>
+    </div>
+
+    <!-- HERO RIGHT: STATIC LUNGS IMAGE -->
+    <div class="hero-right reveal">
+      <img src="{{ url_for('static', filename='images/lungs-3d-render.png') }}" alt="3D Lungs Medical Illustration" class="lungs-image">
+    </div>
+  </div>
+</section>
+
+<section id="uploader" class="uploader-section">
+  <!-- existing uploader HTML unchanged -->
+  <div class="container upload-wrap">
+    <div class="upload-card">
+      <h3>Upload Chest X-ray Image</h3>
+      <form id="uploadForm" method="post" enctype="multipart/form-data" action="{{ url_for('index') }}">
+        <div id="drop" class="dropzone">
+          <input id="fileInput" name="file" type="file" accept="image/*">
+          <div class="drop-text">Drag & drop or click to select an image</div>
+        </div>
+        <div class="actions">
+          <button id="predictBtn" class="btn primary" type="submit">Predict</button>
+          <div id="progressWrap" class="progress-wrap" hidden>
+            <div class="progress-bar" id="progressBar" style="width:0%"></div>
+          </div>
+        </div>
+      </form>
+
+      <div id="preview" class="preview" hidden>
+        <img id="previewImg" src="" alt="preview" />
+        <div class="preview-meta">
+          <div id="fileName" class="file-name"></div>
+          <div id="resultBadge" class="badge" hidden></div>
+        </div>
+      </div>
+
+      <div id="message" class="message small" hidden></div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
