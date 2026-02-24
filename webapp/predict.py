@@ -7,7 +7,7 @@ import numpy as np
 import cv2
 from tensorflow.keras.models import load_model
 
-MODEL_PATH = os.path.join('..', 'models', 'VGG16.h5')  # if run from webapp/ folder adjust to ../models
+MODEL_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'models', 'VGG16.h5')
 IMG_SIZE = (224, 224)
 
 _model = None
