@@ -139,6 +139,33 @@ document.addEventListener('DOMContentLoaded', function(){
           </div>
         </div>
       </div>
+
+      <div class="disclaimer-banner">
+        <div class="disclaimer-icon">⚠️</div>
+        <p><strong>Important:</strong> This analysis is for educational purposes only and should not replace professional medical advice.</p>
+      </div>
+
+      <div class="what-next-section">
+        <h3 class="what-next-title">What Next?</h3>
+        <ul class="what-next-list">
+          <li>
+            <span class="what-next-icon">👨‍⚕️</span>
+            <span>Consult with a healthcare professional immediately</span>
+          </li>
+          <li>
+            <span class="what-next-icon">🏥</span>
+            <span>Follow medical advice for treatment options</span>
+          </li>
+          <li>
+            <span class="what-next-icon">⚙️</span>
+            <span>Review our <a href="https://www.who.int/health-topics/pneumonia" target="_blank" rel="noopener">prevention tips</a></span>
+          </li>
+          <li>
+            <span class="what-next-icon">💙</span>
+            <span>Check <a href="https://www.cdc.gov/pneumonia/" target="_blank" rel="noopener">health measures</a> for pneumonia</span>
+          </li>
+        </ul>
+      </div>
     `;
     
     // Hide progress and show results
