@@ -1,25 +1,51 @@
 """
 predict.py
 Load model and expose a function to preprocess an uploaded image and return prediction.
+Auto-downloads model from GitHub Releases if not present locally.
 """
 import os
+import sys
 import numpy as np
 import cv2
 from tensorflow.keras.models import load_model
 
-MODEL_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'models', 'VGG16.h5')
+MODEL_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'models')
+MODEL_PATH = os.path.join(MODEL_DIR, 'VGG16.h5')
 IMG_SIZE = (224, 224)
 
+# Set this env var on Render, or it defaults to your GitHub Releases URL
+MODEL_URL = os.environ.get(
+    'MODEL_URL',
+    'https://github.com/Chanikya-Sanapala/Major/releases/download/v1.0/VGG16.h5'
+)
+
 _model = None
+
+
+def download_model(url, dest):
+    """Download model file from URL with progress."""
+    import urllib.request
+    os.makedirs(os.path.dirname(dest), exist_ok=True)
+    print(f"[predict] Downloading model from {url} ...")
+    try:
+        urllib.request.urlretrieve(url, dest)
+        size_mb = os.path.getsize(dest) / (1024 * 1024)
+        print(f"[predict] Model downloaded successfully ({size_mb:.1f} MB)")
+    except Exception as e:
+        if os.path.exists(dest):
+            os.remove(dest)
+        raise RuntimeError(f"Failed to download model: {e}")
+
 
 def load_model_once(model_path=None):
     global _model
     if _model is None:
         path = model_path or MODEL_PATH
         if not os.path.exists(path):
-            raise FileNotFoundError(f"Model file not found at {path}. Train and save a model as {path}.")
+            download_model(MODEL_URL, path)
         _model = load_model(path)
     return _model
+
 
 def preprocess_image(file_path, target_size=IMG_SIZE):
     # Read with cv2, convert to RGB, resize, scale
@@ -31,6 +57,7 @@ def preprocess_image(file_path, target_size=IMG_SIZE):
     img = img.astype('float32') / 255.0
     return np.expand_dims(img, axis=0)
 
+
 def predict_from_path(file_path, model_path=None):
     model = load_model_once(model_path)
     x = preprocess_image(file_path)
@@ -38,3 +65,4 @@ def predict_from_path(file_path, model_path=None):
     label = 'PNEUMONIA' if score >= 0.5 else 'NORMAL'
     confidence = score if score >= 0.5 else 1.0 - score
     return {'label': label, 'score': float(score), 'confidence': float(confidence)}
+
