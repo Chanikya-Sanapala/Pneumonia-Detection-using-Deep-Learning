@@ -4,15 +4,19 @@ import numpy as np
 import cv2
 
 try:
-    # Try importing tflite_runtime first (production)
-    import tflite_runtime.interpreter as tflite
+    # Try ai_edge_litert first (newest branding)
+    import ai_edge_litert.interpreter as tflite
 except ImportError:
-    # Fallback to full tensorflow (local development if tflite-runtime not installed)
     try:
-        import tensorflow.lite as tflite
+        # Fallback to tflite_runtime
+        import tflite_runtime.interpreter as tflite
     except ImportError:
-        print("[predict] Error: Neither tflite-runtime nor tensorflow found.")
-        sys.exit(1)
+        # Fallback to full tensorflow (local dev)
+        try:
+            import tensorflow.lite as tflite
+        except ImportError:
+            print("[predict] Error: No TFLite runtime found.")
+            sys.exit(1)
 
 MODEL_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'models')
 MODEL_PATH = os.path.join(MODEL_DIR, 'model.tflite')

@@ -14,6 +14,11 @@ def convert():
 
     print("Converting to TFLite...")
     converter = tf.lite.TFLiteConverter.from_keras_model(model)
+    
+    # Compatibility flags for older runtimes (avoids FULLY_CONNECTED v12)
+    converter.target_spec.supported_ops = [tf.lite.OpsSet.TFLITE_BUILTINS]
+    converter._experimental_lower_to_saved_model = False
+    
     # Enable optimizations for size
     converter.optimizations = [tf.lite.Optimize.DEFAULT]
     tflite_model = converter.convert()

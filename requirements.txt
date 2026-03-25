@@ -3,7 +3,7 @@ werkzeug
 reportlab==4.4.5
 opencv-python-headless
 numpy<2
-tflite-runtime
+ai-edge-litert
 pillow
 matplotlib
 pandas
