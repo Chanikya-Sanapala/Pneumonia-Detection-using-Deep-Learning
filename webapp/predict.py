@@ -5,6 +5,12 @@ Auto-downloads model from GitHub Releases if not present locally.
 """
 import os
 import sys
+
+# Set memory-saving flags BEFORE importing tensorflow
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
+os.environ['MALLOC_TRIM_THRESHOLD_'] = '100000'
+
 import numpy as np
 import cv2
 from tensorflow.keras.models import load_model

@@ -3,7 +3,7 @@ werkzeug
 reportlab==4.4.5
 opencv-python-headless
 numpy
-tensorflow==2.20.0
+tensorflow-cpu==2.20.0
 pillow
 matplotlib
 pandas
