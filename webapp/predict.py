@@ -51,7 +51,7 @@ def load_model_once(model_path=None):
             print(f"[predict] Model not found at {path}, downloading fallback...")
             download_model(MODEL_URL, path)
         print(f"[predict] Loading model from {path}...")
-        _model = load_model(path)
+        _model = load_model(path, compile=False)
         print("[predict] Model loaded successfully.")
     return _model
 
