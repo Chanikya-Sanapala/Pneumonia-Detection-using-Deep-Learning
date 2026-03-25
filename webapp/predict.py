@@ -42,8 +42,11 @@ def load_model_once(model_path=None):
     if _model is None:
         path = model_path or MODEL_PATH
         if not os.path.exists(path):
+            print(f"[predict] Model not found at {path}, downloading fallback...")
             download_model(MODEL_URL, path)
+        print(f"[predict] Loading model from {path}...")
         _model = load_model(path)
+        print("[predict] Model loaded successfully.")
     return _model
 
 
@@ -65,4 +68,14 @@ def predict_from_path(file_path, model_path=None):
     label = 'PNEUMONIA' if score >= 0.5 else 'NORMAL'
     confidence = score if score >= 0.5 else 1.0 - score
     return {'label': label, 'score': float(score), 'confidence': float(confidence)}
+
+
+# Load model on startup in production (Render) to avoid timeout on first request
+if os.environ.get('RENDER') or os.environ.get('PORT'):
+    try:
+        print("[predict] Startup model loading triggered...")
+        load_model_once()
+    except Exception as e:
+        print(f"[predict] Startup model loading failed (will retry on request): {e}")
+
 
