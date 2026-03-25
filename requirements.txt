@@ -2,8 +2,8 @@ flask==3.1.2
 werkzeug
 reportlab==4.4.5
 opencv-python-headless
-numpy
-tflite-runtime==2.14.0.post1
+numpy<2
+tflite-runtime
 pillow
 matplotlib
 pandas
