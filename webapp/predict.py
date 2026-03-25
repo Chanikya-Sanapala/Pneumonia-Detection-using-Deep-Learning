@@ -55,31 +55,31 @@ def preprocess_image(file_path, target_size=IMG_SIZE):
 
 def predict_from_path(file_path):
     """Run inference on the given image path using TFLite."""
-    interpreter = load_model_once()
-    x = preprocess_image(file_path)
-    
-    # Set input tensor
-    interpreter.set_tensor(_input_details[0]['index'], x)
-    
-    # Run inference
-    interpreter.invoke()
-    
-    # Get prediction result
-    output_data = interpreter.get_tensor(_output_details[0]['index'])
-    score = float(output_data[0][0])
-    
-    label = 'PNEUMONIA' if score >= 0.5 else 'NORMAL'
-    confidence = score if score >= 0.5 else 1.0 - score
-    
-    return {
-        'label': label, 
-        'score': score, 
-        'confidence': confidence
-    }
-
-# Pre-load the model on startup if in production
-if os.environ.get('RENDER') or os.environ.get('PORT'):
     try:
-        load_model_once()
+        interpreter = load_model_once()
+        x = preprocess_image(file_path)
+        
+        # Set input tensor
+        interpreter.set_tensor(_input_details[0]['index'], x)
+        
+        # Run inference
+        interpreter.invoke()
+        
+        # Get prediction result
+        output_data = interpreter.get_tensor(_output_details[0]['index'])
+        score = float(output_data[0][0])
+        
+        label = 'PNEUMONIA' if score >= 0.5 else 'NORMAL'
+        confidence = score if score >= 0.5 else 1.0 - score
+        
+        return {
+            'label': label, 
+            'score': score, 
+            'confidence': confidence
+        }
     except Exception as e:
-        print(f"[predict] Startup pre-load failed: {e}")
+        print(f"[predict] Inference error: {e}")
+        raise
+
+# DO NOT load model on startup with --preload and TFLite
+# It avoids "Interpreter not initialized" errors after fork.
