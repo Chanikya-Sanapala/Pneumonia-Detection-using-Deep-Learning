@@ -1,87 +1,85 @@
-"""
-predict.py
-Load model and expose a function to preprocess an uploaded image and return prediction.
-Auto-downloads model from GitHub Releases if not present locally.
-"""
 import os
 import sys
-
-# Set memory-saving flags BEFORE importing tensorflow
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
-os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
-os.environ['MALLOC_TRIM_THRESHOLD_'] = '100000'
-
 import numpy as np
 import cv2
-from tensorflow.keras.models import load_model
+
+try:
+    # Try importing tflite_runtime first (production)
+    import tflite_runtime.interpreter as tflite
+except ImportError:
+    # Fallback to full tensorflow (local development if tflite-runtime not installed)
+    try:
+        import tensorflow.lite as tflite
+    except ImportError:
+        print("[predict] Error: Neither tflite-runtime nor tensorflow found.")
+        sys.exit(1)
 
 MODEL_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'models')
-MODEL_PATH = os.path.join(MODEL_DIR, 'VGG16.h5')
+MODEL_PATH = os.path.join(MODEL_DIR, 'model.tflite')
 IMG_SIZE = (224, 224)
 
-# Set this env var on Render, or it defaults to your GitHub Releases URL
-MODEL_URL = os.environ.get(
-    'MODEL_URL',
-    'https://github.com/Chanikya-Sanapala/Major/releases/download/v1.0/VGG16.h5'
-)
+# Global variables for the interpreter
+_interpreter = None
+_input_details = None
+_output_details = None
 
-_model = None
-
-
-def download_model(url, dest):
-    """Download model file from URL with progress."""
-    import urllib.request
-    os.makedirs(os.path.dirname(dest), exist_ok=True)
-    print(f"[predict] Downloading model from {url} ...")
-    try:
-        urllib.request.urlretrieve(url, dest)
-        size_mb = os.path.getsize(dest) / (1024 * 1024)
-        print(f"[predict] Model downloaded successfully ({size_mb:.1f} MB)")
-    except Exception as e:
-        if os.path.exists(dest):
-            os.remove(dest)
-        raise RuntimeError(f"Failed to download model: {e}")
-
-
-def load_model_once(model_path=None):
-    global _model
-    if _model is None:
-        path = model_path or MODEL_PATH
-        if not os.path.exists(path):
-            print(f"[predict] Model not found at {path}, downloading fallback...")
-            download_model(MODEL_URL, path)
-        print(f"[predict] Loading model from {path}...")
-        _model = load_model(path, compile=False)
-        print("[predict] Model loaded successfully.")
-    return _model
-
+def load_model_once():
+    """Load the TFLite model and set up the interpreter."""
+    global _interpreter, _input_details, _output_details
+    
+    if _interpreter is None:
+        if not os.path.exists(MODEL_PATH):
+            raise FileNotFoundError(f"TFLite model not found at {MODEL_PATH}. Please run conversion script.")
+        
+        print(f"[predict] Loading TFLite model from {MODEL_PATH}...")
+        _interpreter = tflite.Interpreter(model_path=MODEL_PATH)
+        _interpreter.allocate_tensors()
+        
+        _input_details = _interpreter.get_input_details()
+        _output_details = _interpreter.get_output_details()
+        print("[predict] TFLite Interpreter initialized successfully.")
+    
+    return _interpreter
 
 def preprocess_image(file_path, target_size=IMG_SIZE):
-    # Read with cv2, convert to RGB, resize, scale
+    """Read image, convert, resize, and normalize for VGG16 input."""
     img = cv2.imread(file_path)
     if img is None:
         raise ValueError("Failed to read image from " + file_path)
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     img = cv2.resize(img, target_size)
+    
+    # Normalize to [0,1] as float32
     img = img.astype('float32') / 255.0
     return np.expand_dims(img, axis=0)
 
-
-def predict_from_path(file_path, model_path=None):
-    model = load_model_once(model_path)
+def predict_from_path(file_path):
+    """Run inference on the given image path using TFLite."""
+    interpreter = load_model_once()
     x = preprocess_image(file_path)
-    score = float(model.predict(x)[0][0])
+    
+    # Set input tensor
+    interpreter.set_tensor(_input_details[0]['index'], x)
+    
+    # Run inference
+    interpreter.invoke()
+    
+    # Get prediction result
+    output_data = interpreter.get_tensor(_output_details[0]['index'])
+    score = float(output_data[0][0])
+    
     label = 'PNEUMONIA' if score >= 0.5 else 'NORMAL'
     confidence = score if score >= 0.5 else 1.0 - score
-    return {'label': label, 'score': float(score), 'confidence': float(confidence)}
+    
+    return {
+        'label': label, 
+        'score': score, 
+        'confidence': confidence
+    }
 
-
-# Load model on startup in production (Render) to avoid timeout on first request
+# Pre-load the model on startup if in production
 if os.environ.get('RENDER') or os.environ.get('PORT'):
     try:
-        print("[predict] Startup model loading triggered...")
         load_model_once()
     except Exception as e:
-        print(f"[predict] Startup model loading failed (will retry on request): {e}")
-
-
+        print(f"[predict] Startup pre-load failed: {e}")

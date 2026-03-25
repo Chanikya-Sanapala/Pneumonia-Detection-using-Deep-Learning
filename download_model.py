@@ -1,25 +1,15 @@
 import os
-import urllib.request
 
-MODEL_URL = "https://github.com/Chanikya-Sanapala/Pneumonia-Detection-using-Deep-Learning/releases/download/v1.0/VGG16.h5"
 MODEL_DIR = "models"
-MODEL_PATH = os.path.join(MODEL_DIR, "VGG16.h5")
+MODEL_PATH = os.path.join(MODEL_DIR, "model.tflite")
 
-def download_model():
-    if not os.path.exists(MODEL_DIR):
-        os.makedirs(MODEL_DIR)
-    
+def check_model():
     if os.path.exists(MODEL_PATH):
-        print(f"Model already exists at {MODEL_PATH}")
-        return
-
-    print(f"Downloading model from {MODEL_URL}...")
-    try:
-        urllib.request.urlretrieve(MODEL_URL, MODEL_PATH)
-        print(f"Model downloaded successfully to {MODEL_PATH}")
-    except Exception as e:
-        print(f"Error downloading model: {e}")
-        exit(1)
-
+        print(f"✅ TFLite model found at {MODEL_PATH}")
+    else:
+        print(f"❌ TFLite model NOT found at {MODEL_PATH}")
+        print("Please run convert_to_tflite.py locally and push the .tflite file to the models/ folder.")
+        # We don't exit(1) here yet because the user might be about to push it.
+    
 if __name__ == "__main__":
-    download_model()
+    check_model()

@@ -11,5 +11,3 @@ services:
         value: "2"
       - key: MALLOC_TRIM_THRESHOLD_
         value: "100000"
-      - key: TF_ENABLE_ONEDNN_OPTS
-        value: "0"
