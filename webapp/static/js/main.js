@@ -60,16 +60,25 @@ document.addEventListener('DOMContentLoaded', function(){
   }
 
   if (uploadForm) {
+    console.log("[main] Upload form found, attaching submit listener");
     uploadForm.addEventListener('submit', function(ev){
       ev.preventDefault();
+      console.log("[main] Form submitted");
+      
       const formData = new FormData(uploadForm);
-      if (!formData.get('file') || formData.get('file').size === 0){
+      const file = formData.get('file');
+      
+      if (!file || file.size === 0){
+        console.warn("[main] No file selected");
         showMessage('Please choose an image first', 'error');
         return;
       }
+      
+      console.log("[main] Starting fetch for file:", file.name);
       progressWrap.hidden = false;
       progressBar.style.width = '0%';
       predictBtn.disabled = true;
+      predictBtn.innerText = "Analyzing...";
 
       fetch(uploadForm.action, {
         method: 'POST',
@@ -78,25 +87,32 @@ document.addEventListener('DOMContentLoaded', function(){
         },
         body: formData
       }).then(resp => {
-        // if server returns JSON
+        console.log("[main] Server response status:", resp.status);
         const ct = resp.headers.get('content-type') || '';
-        if (ct.includes('application/json')) return resp.json();
-        // otherwise follow redirect or text
-        return resp.text().then(txt => ({ success: false, text: txt }));
+        if (ct.includes('application/json')) {
+          return resp.json();
+        }
+        return resp.text().then(txt => {
+          console.error("[main] Server returned non-JSON:", txt.substring(0, 100));
+          return { success: false, error: "Server error (non-JSON). See logs for details." };
+        });
       })
       .then(data => {
+        console.log("[main] Data received:", data);
         progressBar.style.width = '100%';
         predictBtn.disabled = false;
+        predictBtn.innerText = "Predict";
+        
         if (data && data.success) {
-          // Display results on the same page
           displayResults(data);
         } else {
-          // server didn't return success JSON
-          showMessage(data && data.error ? data.error : (data && data.text ? data.text : 'Prediction failed'), 'error');
+          showMessage(data && data.error ? data.error : 'Prediction failed', 'error');
         }
-      }).catch(err=>{
-        showMessage('Server error: ' + err.message, 'error');
+      }).catch(err => {
+        console.error("[main] Fetch error:", err);
+        showMessage('Connection error: ' + err.message, 'error');
         predictBtn.disabled = false;
+        predictBtn.innerText = "Predict";
       });
     });
   }
