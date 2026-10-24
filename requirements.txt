@@ -10,3 +10,4 @@ pandas
 scikit-learn
 scipy
 gunicorn
+certifi>=2026.10.19
